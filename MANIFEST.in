@@ -1,0 +1,2 @@
+include ffmpeg_setpath/data/*.zip
+include ffmpeg_setpath/data/*.txt
