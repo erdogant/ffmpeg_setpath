@@ -61,9 +61,11 @@ def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest',
 
     # Remove the ffmpeg directory and all its contents.
     if force:
+        # Remove dir from disk
         shutil.rmtree(dirpath)
         # Now again create the directory because it is removed
         dirpath = get_setpath(dirpath)
+
 
     # Set path based on OS
     if get_platform() == "windows":
@@ -182,22 +184,24 @@ def extract_pathnames(dirpath, gfile):
 
 # %%
 def extract_files(dirpath, gfile):
-    logger.info('Extracting ffmpeg files..')
+    logger.info('Extracting..')
     # Get pathnames
-    getPath, getZip = extract_pathnames(dirpath, gfile)
+    extractionPath, getZip = extract_pathnames(dirpath, gfile)
     # Get ext
     ext = os.path.splitext(getZip)[1]
 
     # Unzip if path does not exists
-    if ext == '.zip':
+    if os.path.isfile(getZip) and ext == '.zip':
         zip_ref = zipfile.ZipFile(getZip, 'r')
         zip_ref.extractall(dirpath)
         # zip_contents = zip_ref.namelist()
         zip_ref.close()
+        # Remove zipfile
+        os.remove(getZip)
     else:
         logger.error('Not a valid extension. Only .zip files can be processed.')
 
-    return getPath
+    return extractionPath
 
 
 # %%
@@ -258,7 +262,7 @@ def download_package(URL, dirpath, force_download=False):
     # Check if file exists
     if not os.path.isfile(zipfilepath) or force_download:
         # Download data from URL
-        logger.info('Downloading ffmpeg..')
+        logger.info(f'Downloading ffmpeg {gfile}..')
         wget.download(URL, dirpath)
     else:
         logger.debug(f'[{gfile}] >Skip because found on disk.')
