@@ -16,13 +16,12 @@ __doc__ = """
 ffmpeg_setpath
 =====================================================================
 
-ffmpeg_setpath is to set the path for graphviz for windows machines.
-Based on the operating system, it will download graphviz and include the paths into the system environment.
-There are multiple steps that are taken to set the Graphviz path in the system environment.
-The first two steps are automatically skipped if already present.
+ffmpeg_setpath is to set the path for ffmpeg in the system envoirement.
+Based on the operating system, ffmpeg will be downloaded and added to the system environment.
+The following steps are all automated.
 
-Step 1. Downlaod Graphviz.
-Step 2. Store Graphviz files on disk in temp-directory or the provided dirpath.
+Step 1. Download ffmpeg.
+Step 2. Store ffmpeg files on disk in temp-directory or the provided dirpath.
 Step 3. Add the /bin directory to environment.
 
 Example

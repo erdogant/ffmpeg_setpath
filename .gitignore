@@ -5,11 +5,7 @@ __pycache__/
 
 *.pkl
 .pypirc
-graphviz-2.38/
 *.zip
-tree.dot
-tree.png
-tree.dot.pdf
 
 # C extensions
 *.so
