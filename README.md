@@ -61,21 +61,40 @@ ffmpeg_setpath(force=True)
 
 #### Set specified path in environment
 ```python
-import ffmpeg_setpath
-ffmpeg_setpath.set_path(dirpath=r'c:/temp/ffmpeg/')
+import ffmpeg_setpath as ff
+f.set_path(dirpath=r'c:/temp/ffmpeg/')
+```
 
+#### Check whether path or string exists in system
+```python
+import ffmpeg_setpath as ff
+
+# Check for path
+out_bool = ff.check(r'c:/ffmpeg/bin', exact_match=True)
+
+# Check for string
+out_list = ff.check(r'ffmpeg', exact_match=False)
+```
+
+#### Force to set path in env
+```python
+import ffmpeg_setpath as ff
+
+ff.set_path(r'c:/temp/ffmpeg/')
 ```
 
 #### Remove specified path from environment
 ```python
-import ffmpeg_setpath
-ffmpeg_setpath.remove(r'c:\ffmpeg1\bin')
+import ffmpeg_setpath as ff
+
+ff.remove(r'c:\ffmpeg1\bin')
 ```
 
 #### Show all paths in environment
 ```python
-import ffmpeg_setpath
-ffmpeg_setpath.printe()
+import ffmpeg_setpath as ff
+
+ff.printe()
 ```
 
 
