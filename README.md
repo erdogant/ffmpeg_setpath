@@ -41,10 +41,22 @@ pip install ffmpeg_setpath            # normal install
 pip install --upgrade ffmpeg_setpath # or update if needed
 ```
 
-#### Import ffmpeg_setpath package
+#### Set ffmpeg to your system environment:
 ```python
 from ffmpeg_setpath import ffmpeg_setpath
 ffmpeg_setpath()
+```
+
+#### Specify your ffmpeg directory:
+```python
+from ffmpeg_setpath import ffmpeg_setpath
+ffmpeg_setpath(dirpath=r'c:/ffmpeg/')
+```
+
+#### Start all over and force download all files, unzip, and set to system env:
+```python
+from ffmpeg_setpath import ffmpeg_setpath
+ffmpeg_setpath(force=True)
 ```
 
 
