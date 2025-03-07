@@ -118,7 +118,7 @@ def set_ffmpeg_windows(dirpath, version='latest', force=False):
 
 
 # %%
-def set_path(dirpath, force=False):
+def set_path(dirpath, force: bool=False, verbose: [str, int] = 'info'):
     """Set directory to system path.
 
     Parameters
@@ -135,8 +135,9 @@ def set_path(dirpath, force=False):
         logger.info(f'Set ffmpeg path [{dirpath}] in system environment')
         os.environ["PATH"] += os.pathsep + dirpath
 
+
 # %%
-def remove(dirpath, remove_dir=False):
+def remove(dirpath, remove_dir: bool = False, verbose: [str, int] = 'info'):
     """Set directory to system path.
 
     Parameters
@@ -144,6 +145,8 @@ def remove(dirpath, remove_dir=False):
     dirpath : String, optional
         Pathname of directory to save ffmpeg files.
         None: System temp directory
+    verbose : [str, int], optional
+        Set the verbose messages using string or integer values.
 
     """
     if dirpath in os.environ["PATH"]:
@@ -152,6 +155,9 @@ def remove(dirpath, remove_dir=False):
         # Remove dirpath
         paths = [p for p in paths if p != dirpath]
         os.environ["PATH"] = os.pathsep.join(paths)
+    else:
+        logger.debug(f'Path [{dirpath}] not found in system environment')
+
 
     # Remove the directory and all its contents
     if remove_dir and os.path.exists(dirpath) and os.path.isdir(dirpath):
