@@ -143,11 +143,10 @@ def set_ffmpeg_windows(dirpath, version='latest', force=False):
     else:
         logger.info('Other versions are not available at this point. <downloading latest from github source>')
 
-    # Point directly to the bin
+    # Point directly to the bin and standardize
     finPath = os.path.abspath(os.path.join(dirpath, 'bin'))
 
-    # Check whether already in env.
-    if finPath in os.environ["PATH"] and (not force):
+    if finPath.lower() in os.environ["PATH"].lower() and (not force):
         logger.info('ffmpeg is already set in system environment.')
     else:
         # Download from URL
@@ -162,6 +161,33 @@ def set_ffmpeg_windows(dirpath, version='latest', force=False):
 
     return finPath
 
+
+# %%
+def check(path_or_string, exact_match: bool=False, verbose: [str, int] = 'info'):
+    """Show all paths that contains the string.
+    >>> import ffmpeg_setpath as ff
+    >>> paths_found = ff.check('ffmpeg')
+    >>>
+    >>> paths_found = ff.check(r'c:/ffmpeg/bin', exact_match=True)
+
+    """
+
+    # Set the logger
+    set_logger(verbose=verbose)
+    # Get all paths
+    paths = os.environ["PATH"].split(os.pathsep)
+
+    if exact_match:
+        # Standardize dirpath
+        path_or_string = os.path.abspath(path_or_string)
+        return path_or_string.lower() in os.environ["PATH"].lower()
+    else:
+        paths_found = []
+        for path in paths:
+            if path_or_string.lower() in path.lower():
+                paths_found.append(path)
+
+        return paths_found
 
 # %%
 def set_path(dirpath, force: bool=False, verbose: [str, int] = 'info'):
