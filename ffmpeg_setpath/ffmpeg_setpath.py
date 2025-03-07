@@ -184,7 +184,7 @@ def set_path(dirpath, force: bool=False, verbose: [str, int] = 'info'):
         logger.info(f'Set ffmpeg path [{dirpath}] in system environment')
         os.environ["PATH"] += os.pathsep + dirpath
     else:
-        logger.info(f'Path [{dirpath}] found in system environment')
+        logger.info(f'Path [{dirpath}] already found in system environment')
 
 
 # %%
