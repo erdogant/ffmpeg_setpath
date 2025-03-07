@@ -66,7 +66,6 @@ def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest',
         # Now again create the directory because it is removed
         dirpath = get_setpath(dirpath)
 
-
     # Set path based on OS
     if get_platform() == "windows":
         # Set windows path
@@ -76,6 +75,7 @@ def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest',
         finPath = set_ffmpeg_unix(dirpath)
 
     return finPath
+
 
 # %%
 def set_ffmpeg_unix(dirpath):
@@ -131,9 +131,14 @@ def set_path(dirpath, force: bool=False, verbose: [str, int] = 'info'):
         False: Onluy add to system env if not exist.
 
     """
+    # Set the logger
+    set_logger(verbose=verbose)
+
     if (dirpath not in os.environ["PATH"]) or force:
         logger.info(f'Set ffmpeg path [{dirpath}] in system environment')
         os.environ["PATH"] += os.pathsep + dirpath
+    else:
+        logger.info(f'Path [{dirpath}] found in system environment')
 
 
 # %%
@@ -149,6 +154,9 @@ def remove(dirpath, remove_dir: bool = False, verbose: [str, int] = 'info'):
         Set the verbose messages using string or integer values.
 
     """
+    # Set the logger
+    set_logger(verbose=verbose)
+
     if dirpath in os.environ["PATH"]:
         logger.info(f'Removing ffmpeg path [{dirpath}] from system environment')
         paths = os.environ["PATH"].split(os.pathsep)
