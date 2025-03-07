@@ -23,18 +23,20 @@
 **Star this repo if you like it! ⭐️**
 #
 
-ffmpeg_setpath is to set the path for graphviz for Windows environments.
-Based on the operating system, it will download graphviz and include the paths into the system environment.
-There are multiple steps that are taken to set the Graphviz path in the system environment.
-The first two steps are automatically skipped if already present.
+ffmpeg_setpath is to set the path for ffmpeg for Windows environments.
+It will download ffmpeg and include the paths into the system environment.
+There are multiple steps that are taken to set the ffmpeg path in the system environment.
 
 
-Step 1. Downlaod Graphviz.
+The following steps are automated:
 
-Step 2. Store Graphviz files on disk in temp-directory or the provided dirpath.
+Step 1. ffmpeg_setpath downloads the ffmpeg files.
 
-Step 3. Add the /bin directory to environment.
+Step 2. ffmpeg_setpath stores the files in the temp-directory or the provided dirpath.
 
+Step 3. ffmpeg_setpath adds the /bin directory to system environment.
+
+That's it. Now you can use ffmpeg.
 
 ### Installation
 
