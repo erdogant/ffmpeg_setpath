@@ -29,6 +29,7 @@ def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest',
     All the steps are automated that needs to be done to set the ffmpeg path in the system environment for windows/unix machines.
     ffmpeg files are downloaded from https://www.gyan.dev/ffmpeg/builds/ but the .7z file gives troubles in various systems, and
     therefore a zip file is created instead and put on the Github source (Full ffmpeg version: 2025-03-06).
+    https://ffmpeg.org/
 
     Steps that are automated:
     1. Download ffmpeg.
@@ -101,6 +102,8 @@ def set_ffmpeg_unix(dirpath, version='latest', force=False):
         URL = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl-shared.tar.xz'
     else:
         logger.info('Other versions are not available at this point. <downloading latest from source>')
+
+    # os.system('brew install ffmpeg')
 
     # Final path where ffmpeg binary is expected
     finPath = os.path.abspath(os.path.join(dirpath, 'ffmpeg'))
