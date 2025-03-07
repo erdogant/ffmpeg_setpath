@@ -30,13 +30,9 @@ There are multiple steps that are taken to set the ffmpeg path in the system env
 
 The following steps are automated:
 
-Step 1. ffmpeg_setpath downloads the ffmpeg files.
-
-Step 2. ffmpeg_setpath stores the files in the temp-directory or the provided dirpath.
-
-Step 3. ffmpeg_setpath adds the /bin directory to system environment.
-
-That's it. Now you can use ffmpeg.
+  * Step 1. Download the ffmpeg file.
+  * Step 2. Store the files in the temp-directory or the provided dirpath.
+  * Step 3. Add the /bin directory to system environment.
 
 ### Installation
 
