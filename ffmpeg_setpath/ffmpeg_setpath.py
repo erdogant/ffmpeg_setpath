@@ -78,15 +78,6 @@ def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest',
 
 
 # %%
-# def set_ffmpeg_unix(dirpath):
-#         logger.info('The OS is not supported to automatically set ffmpeg in the system env.')
-#         # apt-get install p7zip
-#         # sudo apt install python-pydot python-pydot-ng ffmpeg
-#         # dpkg -l | grep ffmpeg
-#         # call(['dpkg', '-l', 'grep', 'ffmpeg'])
-#         # call(['dpkg', '-s', 'ffmpeg'])
-
-# %%
 def set_ffmpeg_unix(dirpath, version='latest', force=False):
     """Set ffmpeg path on Unix-based systems.
 
