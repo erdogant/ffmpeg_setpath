@@ -53,10 +53,29 @@ from ffmpeg_setpath import ffmpeg_setpath
 ffmpeg_setpath(dirpath=r'c:/ffmpeg/')
 ```
 
-#### Start all over and force download all files, unzip, and set to system env:
+#### Start all over and force download all files, unzip, and set to system environment:
 ```python
 from ffmpeg_setpath import ffmpeg_setpath
 ffmpeg_setpath(force=True)
+```
+
+#### Set specified path in environment
+```python
+import ffmpeg_setpath
+ffmpeg_setpath.set_path(dirpath=r'c:/temp/ffmpeg/')
+
+```
+
+#### Remove specified path from environment
+```python
+import ffmpeg_setpath
+ffmpeg_setpath.remove(r'c:\ffmpeg1\bin')
+```
+
+#### Show all paths in environment
+```python
+import ffmpeg_setpath
+ffmpeg_setpath.printe()
 ```
 
 
