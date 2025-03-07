@@ -23,13 +23,14 @@ logger = logging.getLogger(__name__)
 
 
 # %% Get ffmpeg path and include into local PATH
-def ffmpeg_setpath(dirpath=None, version: str = 'full', verbose: [str, int] = 'info'):
+def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest', verbose: [str, int] = 'info'):
     """Set the ffmpeg path.
 
-    There are multiple steps that are needed to set the ffmpeg path in the system environment for windows/unix machines.
-    The first two steps are automatically skipped if already present.
-    https://www.gyan.dev/ffmpeg/builds/
+    All the steps are automated that needs to be done to set the ffmpeg path in the system environment for windows/unix machines.
+    ffmpeg files are downloaded from https://www.gyan.dev/ffmpeg/builds/ but the .7z file gives troubles in various systems, and
+    therefore a zip file is created instead and put on the Github source (Full ffmpeg version: 2025-03-06).
 
+    Steps that are automated:
     1. Download ffmpeg.
     2. Store ffmpeg files on disk in temp-directory or the provided dirpath.
     3. Add the /bin directory to environment.
@@ -39,8 +40,11 @@ def ffmpeg_setpath(dirpath=None, version: str = 'full', verbose: [str, int] = 'i
     dirpath : String, optional
         Pathname of directory to save ffmpeg files.
         None: System temp directory
-    version : str, optional
-        'full': Get the full ffmpeg version (2025-03-06) from github source.
+    version : string (default: 'latest')
+        'latest': Download the latest ffmpeg from github source. (note that this is likely not the latest that is available at ffmpeg).
+    force : bool (default: False)
+        True: Remove all files and start all over again.
+        False: Return if ffmpeg is found in system env.
     verbose : [str, int], optional
         Set the verbose messages using string or integer values.
 
@@ -51,64 +55,96 @@ def ffmpeg_setpath(dirpath=None, version: str = 'full', verbose: [str, int] = 'i
     """
     # Set the logger
     set_logger(verbose=verbose)
-    if version == 'full':
-        URL  = 'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build.zip'
-        URL1 = 'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build_1.zip'
-        URL2 = 'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build_2.zip'
-        URL3 = 'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build_3.zip'
-    else:
-        logger.info('Only the full version is available at this point.')
-        return None
 
-    finPath = ''
+    # Extract path from URL
+    dirpath = get_setpath(dirpath)
+
+    # Remove the ffmpeg directory and all its contents.
+    if force:
+        shutil.rmtree(dirpath)
+        # Now again create the directory because it is removed
+        dirpath = get_setpath(dirpath)
+
+    # Set path based on OS
     if get_platform() == "windows":
-        # Download from URL
-        for url in [URL, URL1, URL2, URL3]:
-            gfile, getPath = download_package(url, dirpath=dirpath)
-            # Extract file
-            _ = extract(gfile, getPath)
-
-        if getPath is None:
-            return None
-
-        # Point directly to the bin
-        finPath = os.path.abspath(os.path.join(getPath, 'bin'))
+        # Set windows path
+        finPath = set_ffmpeg_windows(dirpath, version=version, force=force)
     else:
-        logger.info('The OS is not supported to automatically set ffmpeg in the system env.')
-        return None
-        # apt-get install p7zip
+        # Set unix path
+        finPath = set_ffmpeg_unix(dirpath)
 
+    return finPath
+
+# %%
+def set_ffmpeg_unix(dirpath):
+        logger.info('The OS is not supported to automatically set ffmpeg in the system env.')
+        # apt-get install p7zip
         # sudo apt install python-pydot python-pydot-ng ffmpeg
         # dpkg -l | grep ffmpeg
         # call(['dpkg', '-l', 'grep', 'ffmpeg'])
         # call(['dpkg', '-s', 'ffmpeg'])
 
-    # Add to system
-    if finPath not in os.environ["PATH"]:
-        logger.info('Set ffmpeg path in environment.')
-        os.environ["PATH"] += os.pathsep + finPath
+
+# %%
+def set_ffmpeg_windows(dirpath, version='latest', force=False):
+    if version == 'latest':
+        URL = ['https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build.zip',
+               'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build_1.zip',
+               'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build_2.zip',
+               'https://erdogant.github.io//packages/ffmpeg/ffmpeg-2025-03-06-git-696ea1c223-full_build_3.zip']
     else:
-        logger.info('ffmpeg path found in environment.')
+        logger.info('Other versions are not available at this point. <downloading latest from github source>')
+
+    # Point directly to the bin
+    finPath = os.path.abspath(os.path.join(dirpath, 'bin'))
+
+    # Check whether already in env.
+    if finPath in os.environ["PATH"] and (not force):
+        logger.info('ffmpeg is already set in system environment.')
+    else:
+        # Download from URL
+        for url in URL:
+            # Download from url
+            gfile = download_package(url, dirpath, force_download=force)
+            # Extract file to disk
+            _ = extract_files(dirpath, gfile)
+
+        # Add to system env
+        if finPath not in os.environ["PATH"]:
+            logger.info('Set ffmpeg path in environment.')
+            os.environ["PATH"] += os.pathsep + finPath
 
     return finPath
 
-
 # %%
-def extract(gfile, curpath):
-    logger.info('Extracting ffmpeg files..')
-
-    getPath = None
+def extract_pathnames(dirpath, gfile):
     idx = gfile[::-1].find('.') + 1
     dirname = gfile[:-idx]
-    getPath = os.path.abspath(os.path.join(curpath, dirname))
-    getZip = os.path.abspath(os.path.join(curpath, gfile))
+    getPath = os.path.abspath(os.path.join(dirpath, dirname))
+    getZip = os.path.abspath(os.path.join(dirpath, gfile))
     pathname, _ = os.path.split(getZip)
     getPath = os.path.join(pathname, dirname)
 
+    # Matches _1, _10, _123, etc. at the end of the string
+    pattern = r'_\d+$'
+    # Check if the pattern matches
+    if re.search(pattern, getPath):
+        getPath = re.sub(pattern, '', getPath)
+
+    return getPath, getZip
+
+# %%
+def extract_files(dirpath, gfile):
+    logger.info('Extracting ffmpeg files..')
+    # Get pathnames
+    getPath, getZip = extract_pathnames(dirpath, gfile)
+    # Get ext
+    ext = os.path.splitext(getZip)[1]
+
     # Unzip if path does not exists
-    if gfile[-idx:] == '.zip':
+    if ext == '.zip':
         zip_ref = zipfile.ZipFile(getZip, 'r')
-        zip_ref.extractall(pathname)
+        zip_ref.extractall(dirpath)
         # zip_contents = zip_ref.namelist()
         zip_ref.close()
     else:
@@ -127,12 +163,27 @@ def get_platform():
     }
     if sys.platform not in platforms:
         return sys.platform
-    logger.info(f'System found: {platforms[sys.platform]}')
+    logger.debug(f'System found: {platforms[sys.platform]}')
     return platforms[sys.platform]
 
 
+# %%
+def get_setpath(dirpath):
+    if dirpath is None:
+        dirpath = os.path.join(tempfile.gettempdir(), 'ffmpeg')
+    elif dirpath == 'workingdir':
+        dirpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ffmpeg')
+
+    if not os.path.isdir(dirpath):
+        logger.info(f'Create ffmpeg directory: {dirpath}')
+        os.makedirs(dirpath, exist_ok=True)
+
+    # Return
+    return dirpath
+
+
 # %% Import example dataset from github.
-def download_package(URL, dirpath=None):
+def download_package(URL, dirpath, force_download=False):
     """Import example dataset from github.
 
     Parameters
@@ -152,24 +203,21 @@ def download_package(URL, dirpath=None):
         dirpath : currentpath
 
     """
-    if dirpath is None:
-        dirpath = os.path.join(tempfile.gettempdir(), 'ffmpeg')
-    elif dirpath == 'workingdir':
-        dirpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ffmpeg')
-
+    # Get zipfile
     gfile = wget.filename_from_url(URL)
-    PATH_TO_DATA = os.path.join(dirpath, gfile)
-    if not os.path.isdir(dirpath):
-        logger.info(f'Create ffmpeg directory: {dirpath}')
-        os.makedirs(dirpath, exist_ok=True)
+    # Get full path to zipfile
+    zipfilepath = os.path.join(dirpath, gfile)
 
-    # Check file exists.
-    if not os.path.isfile(PATH_TO_DATA):
+    # Check if file exists
+    if not os.path.isfile(zipfilepath) or force_download:
         # Download data from URL
         logger.info('Downloading ffmpeg..')
         wget.download(URL, dirpath)
+    else:
+        logger.debug(f'[{gfile}] >Skip because found on disk.')
 
-    return gfile, dirpath
+    # Return
+    return gfile
 
 
 # %% Retrieve files files.
