@@ -206,11 +206,17 @@ def set_path(dirpath, force: bool=False, verbose: [str, int] = 'info'):
     # Set the logger
     set_logger(verbose=verbose)
 
-    if (dirpath not in os.environ["PATH"]) or force:
+    if not os.isdir(dirpath):
+        logger.warning(f'Dirpath is not valid: {dirpath}')
+        return
+
+    # Standardize
+    dirpath = os.path.abspath(dirpath)
+
+    if (dirpath.lower() not in os.environ["PATH"].lower()) or force:
         logger.info(f'Set ffmpeg path [{dirpath}] in system environment')
         os.environ["PATH"] += os.pathsep + dirpath
-    else:
-        logger.info(f'Path [{dirpath}] already found in system environment')
+        return
 
 
 # %%
@@ -228,10 +234,13 @@ def remove(dirpath, remove_dir: bool = False, verbose: [str, int] = 'info'):
     """
     # Set the logger
     set_logger(verbose=verbose)
+    # Standardize dirpath
+    dirpath = os.path.abspath(dirpath)
 
-    if dirpath in os.environ["PATH"]:
+    if dirpath.lower() in os.environ["PATH"].lower():
         logger.info(f'Removing ffmpeg path [{dirpath}] from system environment')
         paths = os.environ["PATH"].split(os.pathsep)
+
         # Remove dirpath
         paths = [p for p in paths if p != dirpath]
         os.environ["PATH"] = os.pathsep.join(paths)
