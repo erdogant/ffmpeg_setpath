@@ -1,4 +1,4 @@
-# ffmpeg_setpath
+# ffmpeg-setpath
 
 [![Python](https://img.shields.io/pypi/pyversions/ffmpeg_setpath)](https://img.shields.io/pypi/pyversions/ffmpeg_setpath)
 [![Pypi](https://img.shields.io/pypi/v/ffmpeg_setpath)](https://pypi.org/project/ffmpeg_setpath/)
@@ -17,13 +17,13 @@
 <!---[![Coffee](https://img.shields.io/badge/coffee-black-grey.svg)](https://erdogant.github.io/donate/?currency=USD&amount=5)-->
 
 
-* ``ffmpeg_setpath`` is Python package
+* ``ffmpeg-setpath`` is Python package
 
 # 
 **Star this repo if you like it! ⭐️**
 #
 
-ffmpeg_setpath is to set the path for ffmpeg for Windows environments.
+ffmpeg-setpath is to set the path for ffmpeg for Windows environments.
 It will download ffmpeg and include the paths into the system environment.
 There are multiple steps that are taken to set the ffmpeg path in the system environment.
 
@@ -37,8 +37,8 @@ The following steps are automated:
 ### Installation
 
 ```bash
-pip install ffmpeg_setpath            # normal install
-pip install --upgrade ffmpeg_setpath # or update if needed
+pip install ffmpeg-setpath            # normal install
+pip install --upgrade ffmpeg-setpath # or update if needed
 ```
 
 #### Set ffmpeg to your system environment:
