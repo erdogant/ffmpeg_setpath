@@ -110,11 +110,58 @@ def set_ffmpeg_windows(dirpath, version='latest', force=False):
             _ = extract_files(dirpath, gfile)
 
         # Add to system env
-        if finPath not in os.environ["PATH"]:
-            logger.info('Set ffmpeg path in environment.')
-            os.environ["PATH"] += os.pathsep + finPath
+        set_path(finPath)
 
     return finPath
+
+
+# %%
+def set_path(dirpath, force=False):
+    """Set directory to system path.
+
+    Parameters
+    ----------
+    dirpath : String, optional
+        Pathname of directory to save ffmpeg files.
+        None: System temp directory
+    force : bool (default: False)
+        True: Force to add path in system env.
+        False: Onluy add to system env if not exist.
+
+    """
+    if (dirpath not in os.environ["PATH"]) or force:
+        logger.info(f'Set ffmpeg path [{dirpath}] in system environment')
+        os.environ["PATH"] += os.pathsep + dirpath
+
+# %%
+def remove(dirpath, remove_dir=False):
+    """Set directory to system path.
+
+    Parameters
+    ----------
+    dirpath : String, optional
+        Pathname of directory to save ffmpeg files.
+        None: System temp directory
+
+    """
+    if dirpath in os.environ["PATH"]:
+        logger.info(f'Removing ffmpeg path [{dirpath}] from system environment')
+        paths = os.environ["PATH"].split(os.pathsep)
+        # Remove dirpath
+        paths = [p for p in paths if p != dirpath]
+        os.environ["PATH"] = os.pathsep.join(paths)
+
+    # Remove the directory and all its contents
+    if remove_dir and os.path.exists(dirpath) and os.path.isdir(dirpath):
+        logger.info(f'Deleting directory [{dirpath}]')
+        shutil.rmtree(dirpath)
+
+
+# %%
+def printe():
+    paths = os.environ["PATH"].split(os.pathsep)
+    for path in paths:
+        logger.info(f'{path}')
 
 # %%
 def extract_pathnames(dirpath, gfile):

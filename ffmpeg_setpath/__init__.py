@@ -1,5 +1,8 @@
 from ffmpeg_setpath.ffmpeg_setpath import (
     ffmpeg_setpath,
+    set_path,
+    remove,
+    printe,
     wget,
     )
 
