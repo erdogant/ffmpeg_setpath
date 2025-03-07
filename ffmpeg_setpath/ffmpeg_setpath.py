@@ -78,13 +78,68 @@ def ffmpeg_setpath(dirpath=None, force : bool = False, version : str = 'latest',
 
 
 # %%
-def set_ffmpeg_unix(dirpath):
-        logger.info('The OS is not supported to automatically set ffmpeg in the system env.')
-        # apt-get install p7zip
-        # sudo apt install python-pydot python-pydot-ng ffmpeg
-        # dpkg -l | grep ffmpeg
-        # call(['dpkg', '-l', 'grep', 'ffmpeg'])
-        # call(['dpkg', '-s', 'ffmpeg'])
+# def set_ffmpeg_unix(dirpath):
+#         logger.info('The OS is not supported to automatically set ffmpeg in the system env.')
+#         # apt-get install p7zip
+#         # sudo apt install python-pydot python-pydot-ng ffmpeg
+#         # dpkg -l | grep ffmpeg
+#         # call(['dpkg', '-l', 'grep', 'ffmpeg'])
+#         # call(['dpkg', '-s', 'ffmpeg'])
+
+# %%
+def set_ffmpeg_unix(dirpath, version='latest', force=False):
+    """Set ffmpeg path on Unix-based systems.
+
+    https://github.com/BtbN/FFmpeg-Builds/releases
+
+    Parameters
+    ----------
+    dirpath : str
+        Path where ffmpeg should be installed.
+    version : str, optional
+        Version of ffmpeg to download, by default 'latest'.
+    force : bool, optional
+        If True, force reinstallation, by default False.
+
+    Returns
+    -------
+    str
+        Final path where ffmpeg is installed.
+    """
+    if version == 'latest':
+        URL = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl-shared.tar.xz'
+    else:
+        logger.info('Other versions are not available at this point. <downloading latest from source>')
+
+    # Final path where ffmpeg binary is expected
+    finPath = os.path.abspath(os.path.join(dirpath, 'ffmpeg'))
+
+    # Check if already installed
+    if os.path.exists(finPath) and not force:
+        logger.info('ffmpeg is already installed and set in system environment.')
+    else:
+        # Download ffmpeg to disk
+        archive_path = os.path.join(dirpath, 'ffmpeg.tar.xz')
+        logger.info(f'Downloading ffmpeg from {URL}...')
+        wget.download(URL, archive_path)
+
+        # Extract ffmpeg
+        logger.info('Extracting ffmpeg...')
+        shutil.unpack_archive(archive_path, dirpath)
+        os.remove(archive_path)  # Clean up archive
+
+        # Locate the extracted directory
+        extracted_dirs = [d for d in os.listdir(dirpath) if os.path.isdir(os.path.join(dirpath, d))]
+        if extracted_dirs:
+            extracted_dir = os.path.join(dirpath, extracted_dirs[0])
+            bin_path = os.path.join(extracted_dir, 'ffmpeg')
+            shutil.move(bin_path, finPath)  # Move binary to the target location
+            shutil.rmtree(extracted_dir)  # Clean up extracted folder
+
+        # Add to system path
+        set_path(dirpath)
+
+    return finPath
 
 
 # %%
