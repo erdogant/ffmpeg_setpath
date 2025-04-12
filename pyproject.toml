@@ -9,7 +9,7 @@ authors = [{ name = "Erdogan Taskesen", email = "erdogant@gmail.com" },]
 description = "ffmpeg_setpath is a Python library to automatically set the system paths of ffmpeg."
 readme = "README.md"
 requires-python = ">=3"
-license = { file = "LICENSE" }
+license.file = "LICENSE"
 keywords = ["Python", "ffmpeg", "system path"]
 classifiers = [
     "Programming Language :: Python :: 3",
